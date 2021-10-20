@@ -40,8 +40,6 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 	
 	@Override
 	public User getUser(String userName) {
-		if(1==1)	
-			throw new ResourceNotFoundException("ResourceNotFoundException");
 		return userRepo.findByUserName(userName);
 	}
 
