@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -22,7 +23,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity @NoArgsConstructor @AllArgsConstructor @Data
+@Entity 
+@NoArgsConstructor @AllArgsConstructor @Data
 public class User {
 	
 	@Id
@@ -41,15 +43,18 @@ public class User {
 	private Date userCreatedTime;
 	@NotEmpty
 	@Size(min=7, max=15,message="Username should have atleast 7 characters and maximum 10 characters.") 
-	@Pattern(regexp = "^[a-zA-Z]+[0-9]+$", message="Username should starts with characters and end with numbers")
+	@Pattern(regexp = "^[a-zA-Z]+[!@#$%*]?[0-9]+$", message="Username should starts with characters and end with numbers")
 	private String userName;
 	@NotEmpty
-	@Size(min=8, message="Password should have atleast 8 characters.")
+	@Size(min=8,max=20,message="Password should have atleast 8 characters.")
+	@Pattern(regexp = "^[A-Z]{1,2}[a-z]+[%+_!~-]{1,2}[0-9]+$",message="Invalid Password, Check Password Policy")
 	private String password;
 	private Date loginTime;
 	private Date logOffTime;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Collection<Role> roles= new ArrayList<>();
+	@Transient
+	private Collection<RoleToUser> rolesToUser;
 	
 
-}
+	}

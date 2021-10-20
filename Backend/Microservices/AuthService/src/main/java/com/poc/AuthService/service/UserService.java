@@ -1,15 +1,16 @@
 package com.poc.AuthService.service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Map;
 
+import com.poc.AuthService.model.RoleToUser;
 import com.poc.AuthService.model.User;
 
 public interface UserService {
 	
-	User saveUser(User user);
-	void addRoleToUser(String userName, String roleName);
-	User getUser(String userName);
+	Map<String,String> saveUser(User user) throws Exception;
+	void addRoleToUser(String userName, Collection<RoleToUser> userRoles) throws Exception;
+	Map<String,Object> getUser(String userName) throws Exception;
 	
 	
 

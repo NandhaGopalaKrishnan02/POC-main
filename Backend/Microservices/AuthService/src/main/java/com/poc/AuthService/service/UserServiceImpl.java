@@ -3,6 +3,7 @@ package com.poc.AuthService.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -13,10 +14,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.poc.AuthService.exception.ResourceNotFoundException;
+import com.poc.AuthService.exception.UsernameFoundException;
+import com.poc.AuthService.model.Role;
+import com.poc.AuthService.model.RoleToUser;
 import com.poc.AuthService.model.User;
 import com.poc.AuthService.repository.RoleRepo;
 import com.poc.AuthService.repository.UserRepo;
+import com.poc.AuthService.response.JsonResponse;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,20 +35,36 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 	final private RoleRepo roleRepo;
 	
 	
+	
 	@Override
-	public User saveUser(User user) {
+	public Map<String,String> saveUser(User user) throws Exception{
 		user.setUserCreatedTime(new Date());
-		return userRepo.save(user);
-	}
-	
-	@Override
-	public void addRoleToUser(String userName, String roleName) {
 		
+		//User user = userRepo.findByUserName(user.getUserName());
+		if(userRepo.findByUserName(user.getUserName()) != null) {
+			
+			log.error("User not found in the database");
+			throw new UsernameFoundException(user.getUserName()+" is already present in the database");
+		} 
+		userRepo.save(user);
+		return JsonResponse.successMessage("User created successfully");
 	}
 	
 	@Override
-	public User getUser(String userName) {
-		return userRepo.findByUserName(userName);
+	public void addRoleToUser(String userName, Collection<RoleToUser> userRoles) throws Exception{
+		
+		
+		User user=userRepo.findByUserName(userName);
+		userRoles.forEach(role->{
+			Role roleObject = roleRepo.findByName(role.getRoleName());
+			user.getRoles().add(roleObject);
+		});
+	}
+	
+	@Override
+	public Map<String,Object> getUser(String userName) throws Exception{
+		
+		return JsonResponse.getResponseDetails(userRepo.findByUserName(userName));
 	}
 
 	@Override
@@ -62,11 +86,5 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 
 	
 	
-	
-
-
-	
-	
-	
-	
 }
+
