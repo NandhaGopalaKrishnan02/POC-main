@@ -1,0 +1,46 @@
+package com.poc.AuthService.advice;
+
+import java.util.Date;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.poc.AuthService.exception.ResourceNotFoundException;
+
+@ControllerAdvice 
+public class GlobalExceptionHandler {
+  
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException exception){
+		
+		System.out.println("Throwing ResourcenotfoundException");
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+	
+//	@ExceptionHandler(Exception.class)
+//	public ResponseEntity<?> Exception(Exception exception,WebRequest req){
+//		
+//		System.out.println("Throwing Exception");
+//		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.NOT_FOUND);
+//
+//		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+//		
+//		
+//	}
+//	
+//	
+//	@ExceptionHandler(InternalAuthenticationServiceException.class)
+//	public ResponseEntity<?> Exception(InternalAuthenticationServiceException exception,WebRequest req){
+//		
+//		System.out.println("Throwing InternalAuthenticationServiceException");
+//		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.NOT_FOUND);
+//
+//		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+//		
+//		
+//	}
+}
