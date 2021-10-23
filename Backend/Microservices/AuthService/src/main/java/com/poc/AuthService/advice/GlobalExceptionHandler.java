@@ -1,9 +1,11 @@
 package com.poc.AuthService.advice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +17,20 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.poc.AuthService.exception.ResourceNotFoundException;
-import com.poc.AuthService.exception.UsernameFoundException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice 
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   
 	
-	@ExceptionHandler(ResourceNotFoundException.class)
+	@ExceptionHandler(ResourceNotFoundException.class )
 	public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException exception){
 		System.out.println("ResourceNotFoundException");
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.NOT_FOUND);
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
 	
-	@ExceptionHandler(UsernameFoundException.class)
-	public ResponseEntity<?> handleUsernameFoundException(UsernameFoundException exception){
-		System.out.println("UsernameFoundException");
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.FOUND);
-		return new ResponseEntity<>(errorDetails, HttpStatus.FOUND);
-	}
-
-
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -44,9 +39,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		 ex.getBindingResult().getAllErrors().forEach(error -> {
 			 errors.put( ( (FieldError)error).getField() , error.getDefaultMessage());
 		 });
-		 ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST,errors);
+		 ErrorDetails errorDetails = new ErrorDetails(new Date(),ErrorMessage.VALIDATION_ERROR,HttpStatus.BAD_REQUEST,errors);
 		 return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
 		        
+	}
+	
+	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+	public ResponseEntity<?> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException exception){
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.FOUND);
+		return new ResponseEntity<>(errorDetails, HttpStatus.FOUND);
+	}
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException exception){
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.FOUND);
+		return new ResponseEntity<>(errorDetails, HttpStatus.FOUND);
 	}
 	
 	@ExceptionHandler(Exception.class)
@@ -55,7 +62,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
-	
 	
 }

@@ -1,0 +1,9 @@
+package com.poc.AuthService.model;
+
+import javax.persistence.Entity;
+
+@Entity
+public class UserRowCount {
+	
+	private int userRowCount;
+}

@@ -1,14 +1,13 @@
 package com.poc.AuthService.response;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.poc.AuthService.model.User;
 
 public class JsonResponse {
 
-	public static Map<String, Object> getResponseDetails(User user) {
+	public static Map<String,Object> getResponseDetails(User user) {
 		
 		Map<String,Object> responseDetails= new HashMap<String,Object>();
 		responseDetails.put("firstName", user.getFirstName());

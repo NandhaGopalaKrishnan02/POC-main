@@ -3,7 +3,9 @@ package com.poc.AuthService.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -11,20 +13,21 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.poc.AuthService.exception.ResourceNotFoundException;
-import com.poc.AuthService.exception.UsernameFoundException;
+import com.poc.AuthService.advice.ErrorMessage;
+import com.poc.AuthService.exception.TableOverflowException;
 import com.poc.AuthService.model.Role;
 import com.poc.AuthService.model.RoleToUser;
 import com.poc.AuthService.model.User;
+import com.poc.AuthService.model.UserRowCount;
+import com.poc.AuthService.model.UserValidator;
 import com.poc.AuthService.repository.RoleRepo;
 import com.poc.AuthService.repository.UserRepo;
+import com.poc.AuthService.repository.UserRowCountRepo;
 import com.poc.AuthService.response.JsonResponse;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,20 +36,33 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 	
 	final private UserRepo userRepo;
 	final private RoleRepo roleRepo;
-	
-	
+	final private UserRowCountRepo userRowCountRepo;
+	final private PasswordEncoder passwordEncoder;
+	private final int USER_COUNT = 25;
 	
 	@Override
-	public Map<String,String> saveUser(User user) throws Exception{
-		user.setUserCreatedTime(new Date());
+	public Map<String,String> saveUser(UserValidator userInfo) throws Exception{
 		
-		//User user = userRepo.findByUserName(user.getUserName());
-		if(userRepo.findByUserName(user.getUserName()) != null) {
+		UserRowCount userRowCount = userRowCountRepo.getById(1L);
+		if(userRowCount.getUserRowCount() < USER_COUNT) {
+			User user =new User();
+			user.setFirstName(userInfo.getFirstName());
+			user.setLastName(userInfo.getLastName());
+			user.setUserName(userInfo.getUserName());
+			user.setEmailId(userInfo.getEmailId());
+			user.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+			user.setCity(userInfo.getCity());
+			user.setState(userInfo.getState());
+			user.setCountry(userInfo.getCountry());
+			user.setUserCreatedTime(new Date());
 			
-			log.error("User not found in the database");
-			throw new UsernameFoundException(user.getUserName()+" is already present in the database");
-		} 
-		userRepo.save(user);
+			userRepo.save(user);
+			userRowCount.setUserRowCount(userRowCount.getUserRowCount()+1);
+			userRowCountRepo.save(userRowCount);
+		} else {
+			throw new TableOverflowException(ErrorMessage.TABLE_OVERFLOW);
+		}
+		
 		return JsonResponse.successMessage("User created successfully");
 	}
 	
@@ -55,9 +71,13 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 		
 		
 		User user=userRepo.findByUserName(userName);
+		Set<RoleToUser> set = new HashSet<>(userRoles);
+		userRoles.clear();
+		userRoles.addAll(set);
+		
 		userRoles.forEach(role->{
-			Role roleObject = roleRepo.findByName(role.getRoleName());
-			user.getRoles().add(roleObject);
+			Role roleObject= roleRepo.findByName(role.getRoleName());
+				user.getRoles().add(roleObject);
 		});
 	}
 	

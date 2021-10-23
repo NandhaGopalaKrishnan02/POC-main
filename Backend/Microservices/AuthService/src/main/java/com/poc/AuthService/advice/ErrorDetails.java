@@ -5,10 +5,11 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data  @NoArgsConstructor
+@Data  @NoArgsConstructor @AllArgsConstructor
 public class ErrorDetails {
 
 	private Date timeStamp;
@@ -21,13 +22,6 @@ public class ErrorDetails {
 		this.errorMessage = errorMessage;
 		this.errorCode = errorCode;
 	}
-	
-	public ErrorDetails(Date timeStamp, HttpStatus errorCode, Map<String, String> errors) {
-		this.timeStamp = timeStamp;
-		this.errors= errors;
-		this.errorCode = errorCode;
-	}
-	
 	
 	
 	

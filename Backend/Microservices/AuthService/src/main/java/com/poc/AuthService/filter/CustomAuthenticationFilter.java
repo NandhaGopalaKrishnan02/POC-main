@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poc.AuthService.advice.ErrorDetails;
+import com.poc.AuthService.advice.ErrorMessage;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,7 +72,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		log.info("Unsuccessful authentication");
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), "Bad Credentials", HttpStatus.BAD_REQUEST);
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), ErrorMessage.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
 		new ObjectMapper().writeValue(response.getOutputStream(),errorDetails);
 	}
    

@@ -9,25 +9,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.poc.AuthService.filter.CustomAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
 
-@EnableWebSecurity @Configuration @RequiredArgsConstructor
+@EnableWebSecurity @Configuration @RequiredArgsConstructor 
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	private final UserDetailsService userDetailsService;
-//	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	
-	
-	@Override
+	@Override 
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		
-		auth.userDetailsService(userDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
 	}
 		
 	@Override
@@ -37,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().antMatchers("/login").permitAll();
-		http.authorizeRequests().antMatchers("/api/test/**").permitAll();
+		http.authorizeRequests().anyRequest().permitAll();
 		http.addFilter(customAuthenticationFilter);
 	
 	}

@@ -1,0 +1,6 @@
+package com.poc.AuthService.model;
+
+public class UserRowCount {
+	private int id;
+	private int userRowCount
+}
