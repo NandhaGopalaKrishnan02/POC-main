@@ -16,12 +16,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.poc.AuthService.advice.ErrorMessage;
+import com.poc.AuthService.exception.TableOverflowException;
 import com.poc.AuthService.model.Role;
 import com.poc.AuthService.model.RoleToUser;
 import com.poc.AuthService.model.User;
+import com.poc.AuthService.model.UserRowCount;
 import com.poc.AuthService.model.UserValidator;
 import com.poc.AuthService.repository.RoleRepo;
 import com.poc.AuthService.repository.UserRepo;
+import com.poc.AuthService.repository.UserRowCountRepo;
 import com.poc.AuthService.response.JsonResponse;
 
 import lombok.RequiredArgsConstructor;
