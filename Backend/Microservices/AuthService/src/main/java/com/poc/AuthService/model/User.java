@@ -22,12 +22,12 @@ import lombok.NoArgsConstructor;
 
 @Entity 
 @NoArgsConstructor @AllArgsConstructor @Data
-@Table(name="User", uniqueConstraints={
-
-@UniqueConstraint(columnNames ="userName"),
-@UniqueConstraint(columnNames ="emailId")
-
-})
+//@Table(name="User", uniqueConstraints={
+//
+//@UniqueConstraint(columnNames ="userName"),
+//@UniqueConstraint(columnNames ="emailId")
+//
+//})
 
 public class User {
 	

@@ -7,6 +7,7 @@ import com.poc.AuthService.model.User;
 
 public interface UserRepo extends JpaRepository<User, Long> {
 	User findByUserName(String userName);
+	User findByEmailId(String emailId);
 	
 }
 

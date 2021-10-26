@@ -1,5 +1,0 @@
-package com.poc.AuthService.exception;
-
-public class TableOverflowException {
-
-}
