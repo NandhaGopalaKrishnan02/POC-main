@@ -1,11 +1,8 @@
 package com.poc.AuthService.advice;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.poc.AuthService.exception.ResourceNotFoundException;
 import com.poc.AuthService.exception.UserAlreadyExistException;
 import com.poc.AuthService.exception.UserOverFlowException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice 
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {

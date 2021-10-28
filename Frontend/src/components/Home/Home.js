@@ -1,9 +1,10 @@
 import React from "react";
-import "./styles.css";
+import "./HomeStyles.css";
+
 export default function Home() {
   return (
     <div>
-      <p>Home Page</p>
+      <p className="title">Home Page</p>
     </div>
   );
 }

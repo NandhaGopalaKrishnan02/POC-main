@@ -37,8 +37,6 @@ public class UserController {
 	@GetMapping("/users/{userName}") 
 	public ResponseEntity<?> getUser(@PathVariable String userName) throws Exception
 	{
-		System.out.println(userName);
-		System.out.println(userService.getUser(userName));
 		return ResponseEntity.ok().body(userService.getUser(userName));
 	}
 	

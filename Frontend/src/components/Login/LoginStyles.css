@@ -65,14 +65,15 @@ form {
   padding: 14px;
   margin-top: 10px;
   width: 400px;
-  background-color: #fcadad;
+  background-color: #f5b6b6;
   display: flex;
   justify-content: space-between;
-  /* border: 2px solid blue; */
 }
+
 .content {
   font-size: 16px;
 }
+
 .icon {
   margin-top: 3px;
   font-size: 18px;

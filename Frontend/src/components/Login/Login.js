@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import "./styles.css";
+import "./LoginStyles.css";
 import { FaTimes } from "react-icons/fa";
 export default function Login(props) {
   const [userName, setUserName] = useState("");
@@ -14,6 +14,8 @@ export default function Login(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsEmpty(false);
+    setIsError(false);
     if (userName !== "" && password !== "") {
       let credentials = {
         userName,
@@ -41,8 +43,6 @@ export default function Login(props) {
         console.log("Success:", result);
         if (result.hasOwnProperty("username")) {
           props.history.push({ pathname: "/" });
-          setIsEmpty(false);
-          setIsError(false);
         } else if (result.errorMessage === "bad credentials") {
           setIsError(true);
         }

@@ -22,12 +22,7 @@ import lombok.NoArgsConstructor;
 
 @Entity 
 @NoArgsConstructor @AllArgsConstructor @Data
-//@Table(name="User", uniqueConstraints={
-//
-//@UniqueConstraint(columnNames ="userName"),
-//@UniqueConstraint(columnNames ="emailId")
-//
-//})
+
 
 public class User {
 	
@@ -46,7 +41,7 @@ public class User {
 	private Date loginTime;
 	private Date lastLogOffTime;
 	@ManyToMany(fetch = FetchType.EAGER,cascade= {CascadeType.PERSIST})
-	private Collection<Role> roles= new ArrayList<>();
+	private Collection<Role> roles = new ArrayList<>();
 	@Transient
 	private Collection<RoleToUser> rolesToUser;
 
