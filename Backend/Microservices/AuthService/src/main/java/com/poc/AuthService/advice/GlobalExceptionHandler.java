@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.poc.AuthService.exception.ResourceNotFoundException;
 import com.poc.AuthService.exception.UserAlreadyExistException;
 import com.poc.AuthService.exception.UserOverFlowException;
@@ -63,6 +65,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> handleUserAlreadyExistException(UserAlreadyExistException exception){
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.FOUND);
 		return new ResponseEntity<>(errorDetails, HttpStatus.FOUND);
+	}
+	
+	@ExceptionHandler(SignatureVerificationException.class)
+	public ResponseEntity<?> handleUserAlreadyExistException(SignatureVerificationException exception){
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+	}
+	
+	@ExceptionHandler(TokenExpiredException.class)
+	public ResponseEntity<?> handleUserAlreadyExistException(TokenExpiredException exception){
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	

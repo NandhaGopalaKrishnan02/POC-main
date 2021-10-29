@@ -17,6 +17,4 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.AUTO,generator = "native") 
 	private Long id;
 	private String name;
-	
-	
 }

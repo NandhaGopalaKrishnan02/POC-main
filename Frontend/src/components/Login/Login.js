@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import "./LoginStyles.css";
 import { FaTimes } from "react-icons/fa";
+
 export default function Login(props) {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +40,7 @@ export default function Login(props) {
           },
           body: formBody,
         });
+        console.log(data);
         const result = await data.json();
         console.log("Success:", result);
         if (result.hasOwnProperty("username")) {

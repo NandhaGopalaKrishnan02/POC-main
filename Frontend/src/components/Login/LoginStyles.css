@@ -6,7 +6,7 @@
 }
 
 .container {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   min-height: 100vh;
   display: flex;
   justify-content: center;
