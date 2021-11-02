@@ -12,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poc.AuthService.JWTUtility.JWTUtility;
 import com.poc.AuthService.advice.ErrorDetails;
 import com.poc.AuthService.advice.ErrorMessage;
+import com.poc.AuthService.model.UserSession;
+import com.poc.AuthService.repository.UserSessionRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,11 +39,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 	
 	private  final AuthenticationManager authenticationManager;
 	
-
+	@Autowired
+	private UserSessionRepo userSessionRepo;
 	
 
-	
-	public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public CustomAuthenticationFilter(AuthenticationManager authenticationManager,ApplicationContext applicationContext) {
+		this.userSessionRepo=applicationContext.getBean(UserSessionRepo.class);
 		this.authenticationManager = authenticationManager;
 	
 		
@@ -79,10 +84,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		String accessToken = JWTUtility.createAccessToken(user.getUsername(), roles);
 		String refreshToken  = JWTUtility.createRefreshToken(user.getUsername());
 		
+		userSessionRepo.save(new UserSession(user.getUsername(),new Date()));
+		
+		
 		// set the response
 		res.put("access_token", accessToken);
 		res.put("refresh_token", refreshToken);
 		new ObjectMapper().writeValue(response.getOutputStream(),res);
+		
+		
 		
 	}
 

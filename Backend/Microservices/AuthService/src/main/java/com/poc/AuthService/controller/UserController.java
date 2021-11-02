@@ -1,5 +1,6 @@
 package com.poc.AuthService.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,11 +22,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.poc.AuthService.JWTUtility.JWTUtility;
+import com.poc.AuthService.advice.ErrorDetails;
 import com.poc.AuthService.model.Role;
 import com.poc.AuthService.model.User;
 import com.poc.AuthService.model.UserValidator;
+import com.poc.AuthService.model.UserlogOut;
 import com.poc.AuthService.repository.UserRepo;
+import com.poc.AuthService.repository.UserSessionRepo;
+import com.poc.AuthService.response.JsonResponse;
 import com.poc.AuthService.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +43,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 	
     private final UserService userService;
+    private final UserSessionRepo userSessionRepo;
 
     private final UserRepo userRepo;
   
@@ -60,6 +68,7 @@ public class UserController {
 		//Get Authorization header
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		
+		
 		Map<String, String> res= new HashMap<>();
 		
 		// check refresh token present in the incoming request
@@ -69,25 +78,39 @@ public class UserController {
 			String refreshToken  = authorizationHeader.substring(7);
 			
 			// verify the token
-			String userName = JWTUtility.verifyRefreshToken(refreshToken);
+			DecodedJWT decodedJWT = JWTUtility.verifyToken(refreshToken);
 			
-			// Get the user details from db by using username which is present in refresh_token
-			User user = userRepo.findByUserName(userName);
-			
-			// convert roles of type "ROLE" to String
-			List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-			
-			// create access token and refresh token 
-			String newAccessToken = JWTUtility.createAccessToken(userName, roles);
-			String newRefreshToken = JWTUtility.createRefreshToken(userName);
-			
-			// set the response
-			res.put("access_token", newAccessToken);
-			res.put("refresh_token", newRefreshToken);
-		}
-		
-		
-		return ResponseEntity.ok().body(res);
+			String userName= decodedJWT.getSubject();
+			if(userSessionRepo.isloggedIn(userName)) {
+				System.out.println(userSessionRepo.isloggedIn(userName));
+				
+				// Get the user details from db by using username which is present in refresh_token
+				User user = userRepo.findByUserName(userName);
+				
+				// convert roles of type "ROLE" to String
+				List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+				
+				// create access token and refresh token 
+				String newAccessToken = JWTUtility.createAccessToken(userName, roles);
+				String newRefreshToken = JWTUtility.createRefreshToken(userName);
+				
+				// set the response
+				res.put("access_token", newAccessToken);
+				res.put("refresh_token", newRefreshToken);
+				
+				return ResponseEntity.ok().body(res);
+			}
+		}	
+		return ResponseEntity.ok().body(new ErrorDetails(new Date(),"Please Login first",HttpStatus.UNAUTHORIZED));
 	}
+	
+	@DeleteMapping("/logout")
+	public ResponseEntity<?> userLogOut(@RequestBody UserlogOut userlogOut){
+		if(userSessionRepo.delete(userlogOut.getUserName()))
+		{
+			return ResponseEntity.ok().body(JsonResponse.successMessage("User Logged out Successfully"));
+		}
+		return ResponseEntity.ok().body(new ErrorDetails(new Date(),"Something went wrong",HttpStatus.INTERNAL_SERVER_ERROR));
+		}
 
 }

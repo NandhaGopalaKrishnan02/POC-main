@@ -3,7 +3,7 @@ server:
 
 spring:  datasource:    url: jdbc:mysql://localhost:3306/AuthService?createDatabaseIfNotExist=true&useSSL=false 
     username: root
-    password: Nandhu123*
+    password: 15214324
   jpa:#    show-sql: true
     properties:
       hibernate:

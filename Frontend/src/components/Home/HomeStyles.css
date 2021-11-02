@@ -4,7 +4,10 @@
   box-sizing: border-box;
 }
 
-.title {
+.home {
   text-align: center;
   font-size: 25px;
+  color: rgb(128, 3, 3);
 }
+
+  

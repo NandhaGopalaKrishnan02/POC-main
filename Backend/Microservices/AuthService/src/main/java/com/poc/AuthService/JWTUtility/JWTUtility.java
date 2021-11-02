@@ -42,12 +42,14 @@ public class JWTUtility  {
 	}
 	
 	
-	public  static String verifyRefreshToken(String refreshToken) {
+	public  static DecodedJWT verifyToken(String token) {
 		JWTVerifier verifier = JWT.require(algorithm).build();
-		DecodedJWT decodedJWT = verifier.verify(refreshToken);
-		String username = decodedJWT.getSubject();
-		return username;
+		DecodedJWT decodedJWT = verifier.verify(token);
+//		String username = decodedJWT.getSubject();
+		
+		return decodedJWT;
 	}
+	
 	
 	
 	
