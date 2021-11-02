@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
+			<item value="D:\Learning\POC\ConnectionCreation\Learning\Spring-Security-Jwt\SpringSecurityJwtAmigoscode"/>
 			<item value="D:\Learning\POC\ConnectionCreation\POC-main"/>
 		</list>
 		<list key="projectNameTemplate">

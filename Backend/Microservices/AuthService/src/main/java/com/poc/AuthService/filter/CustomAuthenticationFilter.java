@@ -30,10 +30,14 @@ import com.poc.AuthService.advice.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+//@RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	
-	private final AuthenticationManager authenticationManager;
+	private  final AuthenticationManager authenticationManager;
 	
+
+	
+
 	
 	public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
@@ -61,12 +65,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) throws IOException, ServletException {
 		
+		// Get successfully logged user info
 		User user = (User)authentication.getPrincipal();
+		
+		// set content type for response
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		Map<String, String> res=new HashMap<>();
+		
+		// convert roles of type "GrantedAuthority" to String
 		List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+		
+		// Create access and refresh token
 		String accessToken = JWTUtility.createAccessToken(user.getUsername(), roles);
 		String refreshToken  = JWTUtility.createRefreshToken(user.getUsername());
+		
+		// set the response
 		res.put("access_token", accessToken);
 		res.put("refresh_token", refreshToken);
 		new ObjectMapper().writeValue(response.getOutputStream(),res);

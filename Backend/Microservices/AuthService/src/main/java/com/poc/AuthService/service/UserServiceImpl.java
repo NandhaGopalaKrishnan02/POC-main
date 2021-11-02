@@ -39,7 +39,8 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 	final private RoleRepo roleRepo;
 	final private UserRowCountRepo userRowCountRepo;
 	final private PasswordEncoder passwordEncoder;
-	UserRowCount userRowCount= new UserRowCount();
+	
+	UserRowCount userRowCount = new UserRowCount();
 	
 	private int USER_COUNT= 500;
 
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService,UserDetailsService{
 	@Override
 	public Map<String,String> saveUser(UserValidator userInfo) throws Exception{
 		int rowCount=userRowCountRepo.getById(1).getUserRowCount();
+	
 		if(rowCount<USER_COUNT)
 		{
 			if(userRepo.findByUserName(userInfo.getUserName())==null)
